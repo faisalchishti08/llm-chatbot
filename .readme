@@ -1,0 +1,4 @@
+ollama serve
+ollama run qwen2.5:0.5b
+rasa run -p 3000
+gradio main.py
