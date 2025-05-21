@@ -1,7 +1,11 @@
 import gradio as gr
 import ollama
 
+chat_context = []
+
 def add_message(user_message, chat_history):
+    chat_context.append({"role": "user", "content": user_message})
+
     print(f"[add_message] Received user_message: {user_message}")
     print(f"[add_message] Received chat_history: {chat_history}")
     if chat_history is None:
@@ -24,7 +28,7 @@ def respond(chat_history):
     try:
         stream = ollama.chat(
             model="qwen2.5:0.5b",
-            messages=[{"role": "user", "content": user_message}],
+            messages=chat_context,
             stream=True
         )
         response = ""
@@ -34,6 +38,9 @@ def respond(chat_history):
             chat_history[-1][1] = response
             print(f"[respond] Updated chat_history: {chat_history}")
             yield chat_history
+        
+        chat_context.append({"role": "assistant", "content": response}) 
+
 
         print("[respond] Ollama streaming complete.")
 
